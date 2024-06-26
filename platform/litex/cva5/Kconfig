@@ -11,5 +11,4 @@ config PLATFORM_TEMPLATE
 	bool
 	select FDT
 	select SERIAL_LITEX
-	select TIMER_MTIMER
 	default y

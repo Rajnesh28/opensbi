@@ -29,7 +29,7 @@ platform-runcmd = echo LiteX/CVA5
 
 PLATFORM_RISCV_XLEN = 32
 PLATFORM_RISCV_ABI = lp32
-PLATFORM_RISCV_ISA = rv32ima
+PLATFORM_RISCV_ISA = rv32ima_zicsr_zifencei
 PLATFORM_RISCV_CODE_MODEL = medany
 
 # Space separated list of object file names to be compiled for the platform
