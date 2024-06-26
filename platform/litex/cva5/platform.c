@@ -4,6 +4,7 @@
  * Copyright (c) Reconfigurable Computing Lab, Simon Fraser University
  */
 
+
 #include <sbi/riscv_asm.h>
 #include <sbi/riscv_encoding.h>
 #include <sbi/riscv_io.h>
@@ -17,6 +18,7 @@
 #include <sbi_utils/serial/litex-uart.h>
 #include <sbi_utils/timer/aclint_mtimer.h>
 
+
 /*
  * Include these files as needed.
  * See objects.mk PLATFORM_xxx configuration parameters.
@@ -26,6 +28,7 @@
 #include <sbi_utils/serial/uart8250.h>
 #include <sbi_utils/timer/aclint_mtimer.h>
 
+
 #define CVA5_HART_COUNT		1
 #define CVA5_CLINT_ADDR		0x2000000
 #define CVA5_ACLINT_MTIMER_FREQ	10000000
@@ -33,24 +36,11 @@
 					 CLINT_MSWI_OFFSET)
 #define PLATFORM_ACLINT_MTIMER_ADDR	(CVA5_CLINT_ADDR + \
 					 CLINT_MTIMER_OFFSET)
-#define PLATFORM_UART_ADDR		0x82001000
-#define PLATFORM_UART_INPUT_FREQ	10000000
-#define PLATFORM_UART_BAUDRATE		115200
+#define CVA5_UART_ADDR		0x82002000
+#define CVA5_UART_INPUT_FREQ	10000000
+#define CVA5_UART_BAUDRATE		115200
 #define CVA5_DEFAULT_PLATFORM_FEATURES	SBI_PLATFORM_HAS_MFAULTS_DELEGATION
 #define CVA5_DEFAULT_HARDWARE_STACK_SIZE 8192
-
-static struct aclint_mtimer_data mtimer = {
-	.mtime_freq = CVA5_ACLINT_MTIMER_FREQ,
-	.mtime_addr = PLATFORM_ACLINT_MTIMER_ADDR +
-		      ACLINT_DEFAULT_MTIME_OFFSET,
-	.mtime_size = ACLINT_DEFAULT_MTIME_SIZE,
-	.mtimecmp_addr = PLATFORM_ACLINT_MTIMER_ADDR +
-			 ACLINT_DEFAULT_MTIMECMP_OFFSET,
-	.mtimecmp_size = ACLINT_DEFAULT_MTIMECMP_SIZE,
-	.first_hartid = 0,
-	.hart_count = CVA5_HART_COUNT,
-	.has_64bit_mmio = true,
-};
 
 /*
  * CVA5 early initialization.
@@ -67,22 +57,27 @@ static int CVA5_final_init(bool cold_boot)
 {
 	void *fdt;
 
+
 	if (!cold_boot)
 		return 0;
+
 
 	fdt = fdt_get_address();
 	fdt_fixups(fdt);
 
+
 	return 0;
 }
+
 
 /*
  * Initialize the CVA5 console.
  */
 static int CVA5_console_init(void)
 {
-	return litex_uart_init(VEX_DEFAULT_UART_ADDR);
+	return litex_uart_init(CVA5_UART_ADDR);
 }
+
 
 /*
  * Initialize the platform interrupt controller for current HART.
@@ -92,15 +87,15 @@ static int CVA5_irqchip_init(bool cold_boot)
 	return 0;
 }
 
+
 /*
  * Initialize IPI for current HART.
  */
 static int CVA5_ipi_init(bool cold_boot)
 {
-	int ret;
-
 	return 0;
 }
+
 
 /*
  * Initialize CVA5 timer for current HART.
@@ -109,6 +104,7 @@ static int CVA5_timer_init(bool cold_boot)
 {
 	return 0;
 }
+
 
 /*
  * Platform descriptor.
